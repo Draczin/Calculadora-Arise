@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<title>Arise - Calculadora de Armas por Rank</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f3b0f 0%, #254225 100%);
+    min-height: 100vh;
+    margin: 0;
+    padding: 30px 15px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    color: #c7deb4;
+  }
+  section {
+    background: #152815;
+    padding: 30px 35px;
+    max-width: 480px;
+    width: 100%;
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(9, 32, 9, 0.9);
+  }
+  h2 {
+    margin-top: 0;
+    font-weight: 600;
+    font-size: 28px;
+    text-align: center;
+    color: #a5bb7a;
+    margin-bottom: 25px;
+    letter-spacing: 1.05px;
+  }
+  label {
+    display: block;
+    font-weight: 600;
+    font-size: 16px;
+    margin-top: 20px;
+    color: #8a9e67;
+    user-select: none;
+  }
+  select, input[type="number"], input[type="text"] {
+    width: 100%;
+    padding: 12px 14px;
+    margin-top: 8px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 2px solid #2a4a2a;
+    background-color: #203620;
+    color: #b7cc9b;
+    transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    font-weight: 500;
+    user-select: text;
+  }
+  select:focus, input[type="number"]:focus, input[type="text"]:focus {
+    outline: none;
+    border-color: #94ba35;
+    background-color: #2a482a;
+    color: #e0f1a7;
+    box-shadow: 0 0 12px #94ba35cc;
+  }
+  button {
+    margin-top: 30px;
+    width: 100%;
+    padding: 14px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #152815;
+    background: linear-gradient(90deg, #94ba35, #799f28);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px #799f2877;
+    overflow: hidden;
+    position: relative;
+    user-select: none;
+    transition: background 0.4s ease;
+  }
+  button:hover {
+    background: linear-gradient(90deg, #799f28, #94ba35);
+    box-shadow: 0 10px 30px #94ba35dd;
+  }
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(0);
+    animation: rippleEffect 600ms linear;
+    pointer-events: none;
+  }
+  @keyframes rippleEffect {
+    to {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+
+  #resultado {
+    margin-top: 30px;
+    background: #203620;
+    padding: 20px 25px;
+    border-radius: 14px;
+    font-size: 18px;
+    color: #d4e9c7;
+    white-space: pre-wrap;
+    font-weight: 500;
+    min-height: 100px;
+    box-shadow: inset 0 0 10px #2a4a2aaa;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  #resultado.mostra {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .inputs-inferiores {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 10px;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .inputs-inferiores.mostra {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .inputs-inferiores label.neon-label {
+    margin-top: 0;
+    font-weight: 600;
+    color: #b1da89;
+    text-shadow: 0 0 5px #9fcf5eaa, 0 0 8px #b3ec70aa;
+  }
+
+  @media (max-width: 768px) {
+    section {
+      max-width: 100%;
+      padding: 20px 18px;
+    }
+    h2 {
+      font-size: 24px;
+    }
+    button {
+      font-size: 16px;
+    }
+  }
+
+  #marca {
+    position: fixed;
+    bottom: 14px;
+    right: 20px;
+    font-size: 22px;
+    font-weight: 900;
+    color: #a8ce59dd;
+    font-family: 'Poppins', sans-serif;
+    user-select: none;
+    pointer-events: auto;
+    text-shadow: 0 0 10px #2c4a10aa;
+    letter-spacing: 1.3px;
+    cursor: pointer;
+    transition: color 0.3s ease, text-shadow 0.3s ease, transform 0.3s ease;
+    text-decoration: none;
+  }
+  #marca:hover {
+    color: #d0f06f;
+    text-shadow: 0 0 22px #d0f06fcc;
+    transform: scale(1.15);
+    text-decoration: underline;
+  }
+
+@media (max-width: 768px) {
+  body {
+    align-items: stretch;
+    padding: 20px 10px;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<section>
+  <h2>⚔️ Arise - Calculadora de Armas por Rank</h2>
+
+  <label for="rankAlvo">Rank que você quer alcançar:</label>
+  <select id="rankAlvo" onchange="gerarInputsRanksInferiores()">
+    <option value="D">D</option>
+    <option value="C">C</option>
+    <option value="B" selected>B</option>
+    <option value="A">A</option>
+    <option value="S">S</option>
+    <option value="SS">SS</option>
+  </select>
+
+  <div id="inputsInferioresContainer" class="inputs-inferiores" aria-live="polite"></div>
+
+  <label for="precoE">💰 Preço de cada arma E:</label>
+  <input type="text" id="precoE" value="" placeholder="ex: 30.42Sx, 15.5Qi, 20M, 100K" autocomplete="off" />
+
+  <button onclick="calcular(event)">Calcular</button>
+
+  <div id="resultado" role="region" aria-live="polite" aria-atomic="true"></div>
+</section>
+
+<a id="marca" href="https://www.roblox.com/pt/users/666416006/profile" target="_blank" rel="noopener noreferrer" title="Perfil Roblox de Drac2k1">
+  By: Drac2k1
+</a>
+
+<script>
+  const ranks = ["E", "D", "C", "B", "A", "S", "SS"];
+  const multiplicadores = {
+    K: 1e3, M: 1e6, B: 1e9, T: 1e12,
+    Qa: 1e15, Qi: 1e18, Sx: 1e21, Sp: 1e24
+  };
+
+  function parseValorAbreviado(str) {
+    const regex = /^([\d.]+)(K|M|B|T|Qa|Qi|Sx|Sp)$/i;
+    const match = str.trim().match(regex);
+    if (!match) return NaN;
+    const valor = parseFloat(match[1]);
+    const sufixo = match[2];
+    return valor * (multiplicadores[sufixo] || 1);
+  }
+
+  function formatarAbreviado(valor) {
+    if (valor === 0) return "0";
+    const sufixos = Object.entries(multiplicadores).reverse();
+    for (const [sufixo, mult] of sufixos) {
+      if (valor >= mult) return (valor / mult).toFixed(2) + sufixo;
+    }
+    return valor.toFixed(2);
+  }
+
+  function gerarInputsRanksInferiores() {
+    const rankAlvo = document.getElementById("rankAlvo").value;
+    const indexAlvo = ranks.indexOf(rankAlvo);
+    const container = document.getElementById("inputsInferioresContainer");
+    container.innerHTML = "";
+
+    const emojis = ["⚪", "🔵", "🟢", "🟡", "🟠", "🔴"];
+    for (let i = 0; i < indexAlvo; i++) {
+      const rank = ranks[i];
+      const label = document.createElement("label");
+      label.setAttribute("for", "rank_" + rank);
+      label.textContent = `${emojis[i] || "⚔️"} Quantas armas do rank ${rank} você tem?`;
+      label.classList.add("neon-label");
+
+      const input = document.createElement("input");
+      input.type = "number";
+      input.min = 0;
+      input.value = 0;
+      input.id = "rank_" + rank;
+      input.setAttribute("aria-label", `Quantidade de armas do rank ${rank}`);
+
+      container.appendChild(label);
+      container.appendChild(input);
+    }
+
+    setTimeout(() => container.classList.add("mostra"), 10);
+  }
+
+  function calcular(event) {
+    const btn = event.currentTarget;
+    const circle = document.createElement("span");
+    circle.classList.add("ripple");
+    btn.appendChild(circle);
+    const d = Math.max(btn.clientWidth, btn.clientHeight);
+    circle.style.width = circle.style.height = d + "px";
+    const rect = btn.getBoundingClientRect();
+    circle.style.left = event.clientX - rect.left - d / 2 + "px";
+    circle.style.top = event.clientY - rect.top - d / 2 + "px";
+    setTimeout(() => circle.remove(), 600);
+
+    const rankAlvo = document.getElementById("rankAlvo").value;
+    const indexAlvo = ranks.indexOf(rankAlvo);
+    let totalEquivalenteE = 0;
+
+    for (let i = 0; i < indexAlvo; i++) {
+      const rank = ranks[i];
+      const input = document.getElementById("rank_" + rank);
+      const qtd = Math.max(0, parseInt(input.value) || 0);
+      const multiplicador = Math.pow(3, i);
+      totalEquivalenteE += qtd * multiplicador;
+    }
+
+    const totalNecessario = Math.pow(3, indexAlvo);
+    const precoInput = document.getElementById("precoE").value.trim();
+    const precoE = parseValorAbreviado(precoInput);
+
+    if (isNaN(precoE)) {
+      alert("Por favor, insira um preço válido para a arma E (ex: 30.42Sx).");
+      return;
+    }
+
+    const faltamE = Math.max(0, totalNecessario - totalEquivalenteE);
+    const custoTotal = faltamE * precoE;
+
+    let resultado = `🎯 Para alcançar o rank ${rankAlvo}:\n\n`;
+    resultado += `🔢 Total necessário de armas E equivalentes: ${totalNecessario}\n`;
+    resultado += `📦 Você tem equivalentes a ${totalEquivalenteE} armas E (considerando ranks inferiores).\n`;
+    resultado += `🧩 Faltam ${faltamE} armas E.\n`;
+    resultado += `💰 Custo total estimado: ${formatarAbreviado(custoTotal)}\n`;
+
+    const divResultado = document.getElementById("resultado");
+    divResultado.textContent = resultado;
+    divResultado.classList.add("mostra");
+  }
+
+  gerarInputsRanksInferiores();
+</script>
+
+</body>
+</html>
